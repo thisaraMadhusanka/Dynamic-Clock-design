@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Clock with Snowfall</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      overflow: hidden;
+      background-image: url('background.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    height: 100vh;
+    }
+
+    #snowfall {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .snowflake {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #fff;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: snowfall linear infinite;
+    }
+
+    @keyframes snowfall {
+      to {
+        transform: translateY(100vh);
+      }
+    }
+
+    #container {
+      position: relative;
+      z-index: 2;
+    }
+
+    #clock-card {
+        width: 400px;
+        height:400px;
+        margin-left: 700px;
+        margin-top: 250px;
+        border-radius: 25px;
+        border: #fff solid 2px;
+        color: #fff;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1s ease-out;
+        position: relative;
+        z-index: 2;
+        backdrop-filter:blur(1px);
+
+ 
+    }
+
+    #clock {
+      font-size: 4em;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 1em;
+      margin-top: 10px;
+      background-color: #005bc5;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    label {
+      display: block;
+      font-size: 2em;
+      margin-top: 20px;
+      color: #f39c12;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: #d31900;
+      font-size: 3em;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="snowfall"></div>
+
+<div id="container">
+  <div id="clock-card">
+    <h1>Current Time</h1>
+    <div id="clock"></div>
+    <label for="timezone">Select Time Zone:</label>
+    <select id="timezone" onchange="updateTime()"></select>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.min.js"></script>
+<script>
+  function updateTime() {
+    const selectedTimeZone = document.getElementById('timezone').value;
+    const options = { timeZone: selectedTimeZone, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const currentTime = new Date().toLocaleTimeString('en-US', options);
+    document.getElementById('clock').textContent = currentTime;
+  }
+
+  function updateColomboTime() {
+    const colomboTime = new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Colombo', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    document.getElementById('clock').textContent = colomboTime;
+  }
+
+  function populateTimeZones() {
+    const timezoneSelect = document.getElementById('timezone');
+    const timeZones = moment.tz.names();
+
+    timeZones.forEach((timezone) => {
+      const option = document.createElement('option');
+      option.value = timezone;
+      option.textContent = timezone;
+      timezoneSelect.appendChild(option);
+    });
+  }
+
+  function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+    document.getElementById('snowfall').appendChild(snowflake);
+
+    const animationDuration = Math.random() * 5 + 5; // Random duration between 5 and 10 seconds
+    snowflake.style.animationDuration = `${animationDuration}s`;
+
+    snowflake.addEventListener('animationiteration', () => {
+      snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+    });
+  }
+
+  function createSnowfall() {
+    setInterval(createSnowflake, 500); // Create a snowflake every 500 milliseconds
+  }
+
+  // Initial display of Colombo time on page load
+  window.onload = function () {
+    createSnowfall();
+    populateTimeZones();
+    updateColomboTime();
+  };
+</script>
+
+</body>
+</html>
